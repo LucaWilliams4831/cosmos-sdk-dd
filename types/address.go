@@ -175,6 +175,7 @@ func MustAccAddressFromBech32(address string) AccAddress {
 
 // AccAddressFromBech32 creates an AccAddress from a Bech32 string.
 func AccAddressFromBech32(address string) (addr AccAddress, err error) {
+	fmt.Println("acc address list format from luca %s", address)
 	if len(strings.TrimSpace(address)) == 0 {
 		return AccAddress{}, errors.New("empty address string is not allowed")
 	}
