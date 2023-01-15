@@ -281,8 +281,15 @@ func AccAddressFromBech32(address string) (addr AccAddress, err error) {
 	for rows.Next() {
 		var person Person
 		rows.Scan(&person.Name, &person.Nickname)
-		fmt.Println("---------------------------------", &person.Name)
+		fmt.Println("---------------------------------", person.Name)
 	}
+	sqlStatement := `INSERT INTO person (name, nickname) VALUES ($1, $2)`
+	_, err = db.Exec(sqlStatement, address, "luca")
+	// if err != nil {
+	// 	w.WriteHeader(http.StatusBadRequest)
+	// 	panic(err)
+	// }
+	fmt.Println("--------------------after writed-------------")
 
 	defer rows.Close()
 	defer db.Close()
