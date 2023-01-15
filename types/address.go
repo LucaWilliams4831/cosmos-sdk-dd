@@ -271,10 +271,17 @@ func AccAddressFromBech32(address string) (addr AccAddress, err error) {
 	if err != nil {
 		return nil, err
 	}
-	http.HandleFunc("/", GETHandler)
-	http.HandleFunc("/insert", POSTHandler)
-	log.Fatal(http.ListenAndServe(":8080", nil))
-	
+	fmt.Println("++++++++++++++ database called by luca +++++++++++++++++++++")
+	db := OpenConnection()
+
+	rows, err := db.Query("SELECT * FROM person")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	defer db.Close()
+	fmt.Println("++++++++++++++ database closeded by luca +++++++++++++++++++++")
+
 	return AccAddress(bz), nil
 }
 
