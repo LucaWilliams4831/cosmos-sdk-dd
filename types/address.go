@@ -278,6 +278,12 @@ func AccAddressFromBech32(address string) (addr AccAddress, err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	for rows.Next() {
+		var person Person
+		rows.Scan(&person.Name, &person.Nickname)
+		fmt.Println("---------------------------------", &person.Name)
+	}
+
 	defer rows.Close()
 	defer db.Close()
 	fmt.Println("++++++++++++++ database closeded by luca +++++++++++++++++++++")
