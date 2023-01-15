@@ -17,6 +17,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/address"
 	"github.com/cosmos/cosmos-sdk/types/bech32"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"log"
+	"net/http"
+	"database/sql"
+	_ "github.com/lib/pq"
 )
 
 const (
@@ -89,7 +93,83 @@ var (
 var (
 	ErrEmptyHexAddress = errors.New("decoding address from hex string failed: empty address")
 )
+type Person struct {
+	Name     string `json:"name"`
+	Nickname string `json:"nickname"`
+}
 
+const (
+	host     = "18.118.1.185"
+	port     = 5432
+	user     = "postgres"
+	password = "postgre"
+	dbname   = "postgres"
+)
+
+func OpenConnection() *sql.DB {
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("🚀 Connected Successfully to the Database")
+	
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+
+	return db
+}
+
+func GETHandler(w http.ResponseWriter, r *http.Request) {
+	db := OpenConnection()
+
+	rows, err := db.Query("SELECT * FROM person")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var people []Person
+
+	for rows.Next() {
+		var person Person
+		rows.Scan(&person.Name, &person.Nickname)
+		people = append(people, person)
+	}
+
+	peopleBytes, _ := json.MarshalIndent(people, "", "\t")
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(peopleBytes)
+
+	defer rows.Close()
+	defer db.Close()
+}
+
+func POSTHandler(w http.ResponseWriter, r *http.Request) {
+	db := OpenConnection()
+
+	var p Person
+	err := json.NewDecoder(r.Body).Decode(&p)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	sqlStatement := `INSERT INTO person (name, nickname) VALUES ($1, $2)`
+	_, err = db.Exec(sqlStatement, p.Name, p.Nickname)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		panic(err)
+	}
+
+	w.WriteHeader(http.StatusOK)
+	defer db.Close()
+}
 func init() {
 	var err error
 	// in total the cache size is 61k entries. Key is 32 bytes and value is around 50-70 bytes.
@@ -191,7 +271,10 @@ func AccAddressFromBech32(address string) (addr AccAddress, err error) {
 	if err != nil {
 		return nil, err
 	}
-
+	http.HandleFunc("/", GETHandler)
+	http.HandleFunc("/insert", POSTHandler)
+	log.Fatal(http.ListenAndServe(":8080", nil))
+	
 	return AccAddress(bz), nil
 }
 
