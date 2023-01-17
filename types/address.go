@@ -18,7 +18,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/bech32"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"log"
-	"net/http"
+
 	"database/sql"
 	_ "github.com/lib/pq"
 )
@@ -94,7 +94,7 @@ var (
 	ErrEmptyHexAddress = errors.New("decoding address from hex string failed: empty address")
 )
 type Person struct {
-	status     string `json:"status"`
+	status     int `json:"status"`
 	
 }
 
@@ -236,18 +236,20 @@ func AccAddressFromBech32(address string) (addr AccAddress, err error) {
 		log.Fatal(err)
 	}
 	var person Person
-	person.status = -1
+	person.status = 0
 	if err == nil {
 		for rows.Next() {
 		
 			rows.Scan(&person.status)
 			if person.status == 1{
 				flag = true
+			}else{
+				person.status = -1
 			}
 			break
 		}	
 	}
-	if (flag == false && person.status == -1) {
+	if (flag == false && person.status == 0) {
 		
 		sqlStatement := `INSERT INTO accounts (address) VALUES ($1)`
 		_, err = db.Exec(sqlStatement,string(address) )
