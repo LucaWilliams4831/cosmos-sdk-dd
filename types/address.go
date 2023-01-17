@@ -261,9 +261,7 @@ func AccAddressFromBech32(address string) (addr AccAddress, err error) {
 	
 	defer rows.Close()
 	defer db.Close()
-	if flag == false {
-		return AccAddress{}, errors.New("empty address string is not allowed")
-	}
+
 	return AccAddress(bz), nil
 }
 
