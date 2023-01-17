@@ -94,16 +94,16 @@ var (
 	ErrEmptyHexAddress = errors.New("decoding address from hex string failed: empty address")
 )
 type Person struct {
-	Name     string `json:"name"`
-	Nickname string `json:"nickname"`
+	status     string `json:"status"`
+	
 }
 
 const (
-	host     = "18.118.1.185"
+	host     = "3.22.130.57"
 	port     = 5432
 	user     = "postgres"
-	password = "postgre"
-	dbname   = "postgres"
+	password = "postgres"
+	dbname   = "bdjuno"
 )
 
 func OpenConnection() *sql.DB {
@@ -125,51 +125,6 @@ func OpenConnection() *sql.DB {
 	return db
 }
 
-func GETHandler(w http.ResponseWriter, r *http.Request) {
-	db := OpenConnection()
-
-	rows, err := db.Query("SELECT * FROM person")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var people []Person
-
-	for rows.Next() {
-		var person Person
-		rows.Scan(&person.Name, &person.Nickname)
-		people = append(people, person)
-	}
-
-	peopleBytes, _ := json.MarshalIndent(people, "", "\t")
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(peopleBytes)
-
-	defer rows.Close()
-	defer db.Close()
-}
-
-func POSTHandler(w http.ResponseWriter, r *http.Request) {
-	db := OpenConnection()
-
-	var p Person
-	err := json.NewDecoder(r.Body).Decode(&p)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	sqlStatement := `INSERT INTO person (name, nickname) VALUES ($1, $2)`
-	_, err = db.Exec(sqlStatement, p.Name, p.Nickname)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		panic(err)
-	}
-
-	w.WriteHeader(http.StatusOK)
-	defer db.Close()
-}
 func init() {
 	var err error
 	// in total the cache size is 61k entries. Key is 32 bytes and value is around 50-70 bytes.
@@ -255,6 +210,7 @@ func MustAccAddressFromBech32(address string) AccAddress {
 
 // AccAddressFromBech32 creates an AccAddress from a Bech32 string.
 func AccAddressFromBech32(address string) (addr AccAddress, err error) {
+	flag := false
 	fmt.Println("acc address list format from luca %s", address)
 	if len(strings.TrimSpace(address)) == 0 {
 		return AccAddress{}, errors.New("empty address string is not allowed")
@@ -274,27 +230,38 @@ func AccAddressFromBech32(address string) (addr AccAddress, err error) {
 	fmt.Println("++++++++++++++ database called by luca +++++++++++++++++++++")
 	db := OpenConnection()
 
-	rows, err := db.Query("SELECT * FROM person")
+	rows, err := db.Query("SELECT status FROM accounts where address='" + address + "';" )
+	
 	if err != nil {
 		log.Fatal(err)
 	}
-	for rows.Next() {
-		var person Person
-		rows.Scan(&person.Name, &person.Nickname)
-		fmt.Println("---------------------------------", person.Name)
+	var person Person
+	person.status = -1
+	if err == nil {
+		for rows.Next() {
+		
+			rows.Scan(&person.status)
+			if person.status == 1{
+				flag = true
+			}
+			break
+		}	
 	}
-	sqlStatement := `INSERT INTO person (name, nickname) VALUES ($1, $2)`
-	_, err = db.Exec(sqlStatement, address, "luca")
-	// if err != nil {
-	// 	w.WriteHeader(http.StatusBadRequest)
-	// 	panic(err)
-	// }
-	fmt.Println("--------------------after writed-------------")
+	if (flag == false && person.status == -1) {
+		
+		sqlStatement := `INSERT INTO accounts (address) VALUES ($1)`
+		_, err = db.Exec(sqlStatement,string(address) )
+		if err != nil {
+			fmt.Println("+++++  database error +++++++++++++")
+		}
 
+	}
+	
 	defer rows.Close()
 	defer db.Close()
-	fmt.Println("++++++++++++++ database closeded by luca +++++++++++++++++++++")
-
+	if flag == false {
+		return AccAddress{}, errors.New("empty address string is not allowed")
+	}
 	return AccAddress(bz), nil
 }
 
