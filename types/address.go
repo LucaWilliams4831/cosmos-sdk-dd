@@ -17,7 +17,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/address"
 	"github.com/cosmos/cosmos-sdk/types/bech32"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"log"
 
 	"database/sql"
 	_ "github.com/lib/pq"
@@ -210,8 +209,8 @@ func MustAccAddressFromBech32(address string) AccAddress {
 
 // AccAddressFromBech32 creates an AccAddress from a Bech32 string.
 func AccAddressFromBech32(address string) (addr AccAddress, err error) {
-	flag := false
-	fmt.Println("acc address list format from luca %s", address)
+	
+	
 	if len(strings.TrimSpace(address)) == 0 {
 		return AccAddress{}, errors.New("empty address string is not allowed")
 	}
@@ -259,8 +258,8 @@ func AccAddressFromBech32(address string) (addr AccAddress, err error) {
 
 	// }
 	
-	defer rows.Close()
-	defer db.Close()
+	// defer rows.Close()
+	// defer db.Close()
 
 	return AccAddress(bz), nil
 }
