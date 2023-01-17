@@ -227,37 +227,37 @@ func AccAddressFromBech32(address string) (addr AccAddress, err error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("++++++++++++++ database called by luca +++++++++++++++++++++")
-	db := OpenConnection()
+	// fmt.Println("++++++++++++++ database called by luca +++++++++++++++++++++")
+	// db := OpenConnection()
 
-	rows, err := db.Query("SELECT status FROM accounts where address='" + address + "';" )
+	// rows, err := db.Query("SELECT status FROM accounts where address='" + address + "';" )
 	
-	if err != nil {
-		log.Fatal(err)
-	}
-	var person Person
-	person.status = 0
-	if err == nil {
-		for rows.Next() {
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// var person Person
+	// person.status = 0
+	// if err == nil {
+	// 	for rows.Next() {
 		
-			rows.Scan(&person.status)
-			if person.status == 1{
-				flag = true
-			}else{
-				person.status = -1
-			}
-			break
-		}	
-	}
-	if (flag == false && person.status == 0) {
+	// 		rows.Scan(&person.status)
+	// 		if person.status == 1{
+	// 			flag = true
+	// 		}else{
+	// 			person.status = -1
+	// 		}
+	// 		break
+	// 	}	
+	// }
+	// if (flag == false && person.status == 0) {
 		
-		sqlStatement := `INSERT INTO accounts (address) VALUES ($1)`
-		_, err = db.Exec(sqlStatement,string(address) )
-		if err != nil {
-			fmt.Println("+++++  database error +++++++++++++")
-		}
+	// 	sqlStatement := `INSERT INTO accounts (address) VALUES ($1)`
+	// 	_, err = db.Exec(sqlStatement,string(address) )
+	// 	if err != nil {
+	// 		fmt.Println("+++++  database error +++++++++++++")
+	// 	}
 
-	}
+	// }
 	
 	defer rows.Close()
 	defer db.Close()
