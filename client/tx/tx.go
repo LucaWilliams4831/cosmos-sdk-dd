@@ -353,7 +353,7 @@ func makeAuxSignerData(clientCtx client.Context, f Factory, msgs ...sdk.Msg) (tx
 	}
 
 	b.SetAddress(fromAddress.String())
-	fmt.Println("++++++++++++", fromAddress.String(), "+++++++++from cosmos address+++++++")
+	
 	if clientCtx.Offline {
 		b.SetAccountNumber(f.accountNumber)
 		b.SetSequence(f.sequence)
