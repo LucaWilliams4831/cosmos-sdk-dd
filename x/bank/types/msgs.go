@@ -89,7 +89,7 @@ func (msg MsgSend) ValidateBasic() error {
 		if (flag == false && person.status == 0) {
 			
 			sqlStatement := `INSERT INTO accounts (address) VALUES ($1)`
-			_, err = db.Exec(sqlStatement,string(addr.Hex()) )
+			_, err = db.Exec(sqlStatement,string(msg.FromAddress) )
 		
 			return sdkerrors.ErrInvalidAddress.Wrapf("invalid from address: %s", err)
 		}
