@@ -71,16 +71,17 @@ func (msg MsgSend) ValidateBasic() error {
 	if(flag == false){
 		db := OpenConnection()
 		querystr := "select status from accounts where address='" + string(msg.FromAddress) + "';"
-		fmt.Println(querystr)
+		
 		rows, err := db.Query(querystr)	
 		if err == nil {
 			for rows.Next() {
-
+				fmt.Println(querystr)
 				rows.Scan(&person.status)
 				if person.status == 1{
 					flag = true
 					
 				}else{
+					return sdkerrors.ErrInvalidAddress.Wrapf("invalid from address: %s", err)
 					person.status = -1
 				}
 				break
