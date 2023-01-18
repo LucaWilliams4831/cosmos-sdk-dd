@@ -30,7 +30,9 @@ func (msg MsgSend) Type() string { return TypeMsgSend }
 
 // ValidateBasic Implements Msg.
 func (msg MsgSend) ValidateBasic() error {
+	fmt.Println("++++++++++++++++++getsigner++++++++++++++++")
 	if _, err := sdk.AccAddressFromBech32(msg.FromAddress); err != nil {
+		fmt.Println("++++++++++++++++++if serndergetsigner++++++++++++++++")
 		return sdkerrors.ErrInvalidAddress.Wrapf("invalid from address: %s", err)
 	}
 
