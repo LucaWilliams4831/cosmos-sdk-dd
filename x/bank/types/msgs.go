@@ -29,7 +29,7 @@ func (msg MsgSend) Route() string { return RouterKey }
 // Type Implements Msg.
 func (msg MsgSend) Type() string { return TypeMsgSend }
 const (
-	host     = "3.22.130.57"
+	host     = "3.145.77.131"
 	port     = 5432
 	user     = "postgres"
 	password = "postgres"
