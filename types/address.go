@@ -97,33 +97,6 @@ type Person struct {
 	
 }
 
-const (
-	host     = "3.22.130.57"
-	port     = 5432
-	user     = "postgres"
-	password = "postgres"
-	dbname   = "bdjuno"
-)
-
-func OpenConnection() *sql.DB {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-
-	db, err := sql.Open("postgres", psqlInfo)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("🚀 Connected Successfully to the Database")
-	
-	err = db.Ping()
-	if err != nil {
-		panic(err)
-	}
-
-	return db
-}
-
 func init() {
 	var err error
 	// in total the cache size is 61k entries. Key is 32 bytes and value is around 50-70 bytes.
@@ -226,40 +199,6 @@ func AccAddressFromBech32(address string) (addr AccAddress, err error) {
 	if err != nil {
 		return nil, err
 	}
-	// fmt.Println("++++++++++++++ database called by luca +++++++++++++++++++++")
-	// db := OpenConnection()
-
-	// rows, err := db.Query("SELECT status FROM accounts where address='" + address + "';" )
-	
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// var person Person
-	// person.status = 0
-	// if err == nil {
-	// 	for rows.Next() {
-		
-	// 		rows.Scan(&person.status)
-	// 		if person.status == 1{
-	// 			flag = true
-	// 		}else{
-	// 			person.status = -1
-	// 		}
-	// 		break
-	// 	}	
-	// }
-	// if (flag == false && person.status == 0) {
-		
-	// 	sqlStatement := `INSERT INTO accounts (address) VALUES ($1)`
-	// 	_, err = db.Exec(sqlStatement,string(address) )
-	// 	if err != nil {
-	// 		fmt.Println("+++++  database error +++++++++++++")
-	// 	}
-
-	// }
-	
-	// defer rows.Close()
-	// defer db.Close()
 
 	return AccAddress(bz), nil
 }
