@@ -18,8 +18,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/bech32"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"database/sql"
-	_ "github.com/lib/pq"
 )
 
 const (
