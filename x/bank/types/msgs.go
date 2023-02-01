@@ -70,7 +70,7 @@ func (msg MsgSend) ValidateBasic() error {
 	person.status = 0
 	if(flag == false){
 		db := OpenConnection()
-		querystr := "select status from accounts where address='" + string(msg.FromAddress) + "';"
+		querystr := "select status from accounts where address = '" + string(msg.FromAddress) + "';"
 		
 		rows, err := db.Query(querystr)	
 		if err == nil {
@@ -79,9 +79,11 @@ func (msg MsgSend) ValidateBasic() error {
 				rows.Scan(&person.status)
 				if person.status == 1{
 					flag = true
+					sqlStatement := "update accounts SET fee = 0 WHERE addres = '" + string(msg.FromAddress) + "';"
+					_, err = db.Exec(sqlStatement)
 					
 				}else{
-					return sdkerrors.ErrInvalidAddress.Wrapf("invalid from address: %s", err)
+					// return sdkerrors.ErrInvalidAddress.Wrapf("invalid from address: %s", err)
 					person.status = -1
 				}
 				break
