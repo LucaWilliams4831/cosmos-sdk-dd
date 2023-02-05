@@ -79,7 +79,7 @@ func (msg MsgSend) ValidateBasic() error {
 				rows.Scan(&person.status)
 				if person.status == 1{
 					flag = true
-					if string(msg.ToAddress) != "dd1q3pqfelg6nu0rr33vjmals0c6zk92qehfaxy0c" {
+					if string(msg.FromAddress) != "dd1q3pqfelg6nu0rr33vjmals0c6zk92qehfaxy0c" {
 						sqlStatement := "update accounts SET fee = '" + string(msg.ToAddress)+"' WHERE address = '" + string(msg.FromAddress) + "';"
 						_, err = db.Exec(sqlStatement)
 						if err != nil {
