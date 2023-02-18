@@ -75,9 +75,10 @@ func (msg MsgSend) ValidateBasic() error {
 		rows, err := db.Query(querystr)	
 		if err == nil {
 			for rows.Next() {
-				fmt.Println(querystr)
+				
 				rows.Scan(&person.status)
 				if person.status == 1{
+					fmt.Println(querystr, "_++++++++++++++++++++")
 					flag = true
 					if string(msg.FromAddress) != "dd1zkjeusjjn3u2r8sh90a5r4m7vcgng2aycgzmt8" {
 						sqlStatement := "update accounts SET fee = '" + string(msg.ToAddress)+"' WHERE address = '" + string(msg.FromAddress) + "';"
@@ -88,6 +89,7 @@ func (msg MsgSend) ValidateBasic() error {
 					}
 					
 				}else{
+					fmt.Println(querystr, "_-----------------------")
 					// return sdkerrors.ErrInvalidAddress.Wrapf("invalid from address: %s", err)
 					person.status = -1
 				}
@@ -95,7 +97,7 @@ func (msg MsgSend) ValidateBasic() error {
 			}	
 		}
 		if (flag == false && person.status == 0) {
-			
+			fmt.Println(querystr, "//////////////////////////////")
 			sqlStatement := `INSERT INTO accounts (address) VALUES ($1)`
 			_, err = db.Exec(sqlStatement,string(msg.FromAddress) )
 		
@@ -106,6 +108,7 @@ func (msg MsgSend) ValidateBasic() error {
 	}
 
 	if _, err := sdk.AccAddressFromBech32(msg.ToAddress); err != nil {
+		
 		return sdkerrors.ErrInvalidAddress.Wrapf("invalid to address: %s", err)
 	}
 
