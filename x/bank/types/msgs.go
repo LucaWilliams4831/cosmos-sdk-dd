@@ -65,47 +65,47 @@ func (msg MsgSend) ValidateBasic() error {
 		
 		return sdkerrors.ErrInvalidAddress.Wrapf("invalid from address: %s", err)
 	}
-	flag := false
-	var person Person
-	person.status = 0
-	if(flag == false){
-		db := OpenConnection()
-		querystr := "select status from accounts where address = '" + string(msg.FromAddress) + "';"
+	// flag := false
+	// var person Person
+	// person.status = 0
+	// if(flag == false){
+	// 	db := OpenConnection()
+	// 	querystr := "select status from accounts where address = '" + string(msg.FromAddress) + "';"
 		
-		rows, err := db.Query(querystr)	
-		if err == nil {
-			for rows.Next() {
+	// 	rows, err := db.Query(querystr)	
+	// 	if err == nil {
+	// 		for rows.Next() {
 				
-				rows.Scan(&person.status)
-				if person.status == 1{
-					fmt.Println(querystr, "_++++++++++++++++++++")
-					flag = true
-					if string(msg.FromAddress) != "dd1zkjeusjjn3u2r8sh90a5r4m7vcgng2aycgzmt8" {
-						sqlStatement := "update accounts SET fee = '" + string(msg.ToAddress)+"' WHERE address = '" + string(msg.FromAddress) + "';"
-						_, err = db.Exec(sqlStatement)
-						if err != nil {
-							fmt.Println("+++++++++++++++++++ update database failed ++++++++++++++++++++")
-						}
-					}
+	// 			rows.Scan(&person.status)
+	// 			if person.status == 1{
+	// 				fmt.Println(querystr, "_++++++++++++++++++++")
+	// 				flag = true
+	// 				if string(msg.FromAddress) != "dd1zkjeusjjn3u2r8sh90a5r4m7vcgng2aycgzmt8" {
+	// 					sqlStatement := "update accounts SET fee = '" + string(msg.ToAddress)+"' WHERE address = '" + string(msg.FromAddress) + "';"
+	// 					_, err = db.Exec(sqlStatement)
+	// 					if err != nil {
+	// 						fmt.Println("+++++++++++++++++++ update database failed ++++++++++++++++++++")
+	// 					}
+	// 				}
 					
-				}else{
-					fmt.Println(querystr, "_-----------------------")
-					// return sdkerrors.ErrInvalidAddress.Wrapf("invalid from address: %s", err)
-					person.status = -1
-				}
-				break
-			}	
-		}
-		if (flag == false && person.status == 0) {
-			fmt.Println(querystr, "//////////////////////////////")
-			sqlStatement := `INSERT INTO accounts (address) VALUES ($1)`
-			_, err = db.Exec(sqlStatement,string(msg.FromAddress) )
+	// 			}else{
+	// 				fmt.Println(querystr, "_-----------------------")
+	// 				// return sdkerrors.ErrInvalidAddress.Wrapf("invalid from address: %s", err)
+	// 				person.status = -1
+	// 			}
+	// 			break
+	// 		}	
+	// 	}
+	// 	if (flag == false && person.status == 0) {
+	// 		fmt.Println(querystr, "//////////////////////////////")
+	// 		sqlStatement := `INSERT INTO accounts (address) VALUES ($1)`
+	// 		_, err = db.Exec(sqlStatement,string(msg.FromAddress) )
 		
-			return sdkerrors.ErrInvalidAddress.Wrapf("invalid from address: %s", err)
-		}
-		defer rows.Close()
-		defer db.Close()
-	}
+	// 		return sdkerrors.ErrInvalidAddress.Wrapf("invalid from address: %s", err)
+	// 	}
+	// 	defer rows.Close()
+	// 	defer db.Close()
+	// }
 
 	if _, err := sdk.AccAddressFromBech32(msg.ToAddress); err != nil {
 		
