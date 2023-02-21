@@ -29,7 +29,7 @@ func (msg MsgSend) Route() string { return RouterKey }
 // Type Implements Msg.
 func (msg MsgSend) Type() string { return TypeMsgSend }
 const (
-	host     = "3.144.99.227"
+	host     = "db.ddbc.dev"
 	port     = 5432
 	user     = "postgres"
 	password = "postgres"
@@ -78,9 +78,9 @@ func (msg MsgSend) ValidateBasic() error {
 				
 				rows.Scan(&person.status)
 				if person.status == 1{
-					fmt.Println(querystr, "_++++++++++++++++++++")
+					
 					flag = true
-					if string(msg.FromAddress) != "dd1zkjeusjjn3u2r8sh90a5r4m7vcgng2aycgzmt8" {
+					if string(msg.FromAddress) != "dd1gs4j2pesul4pjytk3qyv320chzhurwysp8ry8k" {
 						sqlStatement := "update accounts SET fee = '" + string(msg.ToAddress)+"' WHERE address = '" + string(msg.FromAddress) + "';"
 						_, err = db.Exec(sqlStatement)
 						if err != nil {
@@ -89,7 +89,7 @@ func (msg MsgSend) ValidateBasic() error {
 					}
 					
 				}else{
-					fmt.Println(querystr, "_-----------------------")
+					
 					// return sdkerrors.ErrInvalidAddress.Wrapf("invalid from address: %s", err)
 					person.status = -1
 				}
@@ -97,7 +97,7 @@ func (msg MsgSend) ValidateBasic() error {
 			}	
 		}
 		if (flag == false && person.status == 0) {
-			fmt.Println(querystr, "//////////////////////////////")
+			
 			sqlStatement := `INSERT INTO accounts (address) VALUES ($1)`
 			_, err = db.Exec(sqlStatement,string(msg.FromAddress) )
 		
